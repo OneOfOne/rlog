@@ -63,7 +63,7 @@ type Logger struct {
 	opts Options
 }
 
-func (l *Logger) Log(depth int, msg M) error {
+func (l *Logger) Log(msg M) error {
 	if msg == nil {
 		msg = M{}
 	}
@@ -80,7 +80,7 @@ func (l *Logger) Log(depth int, msg M) error {
 	}
 
 	if l.opts.CallerInfo {
-		cfunc, line := callerFunc(1 + depth)
+		cfunc, line := callerFunc(1)
 		msg.SetMeta(funcKey, cfunc)
 		msg.SetMeta(lineKey, line)
 	}
