@@ -20,6 +20,6 @@ func TestLog(t *testing.T) {
 	rl := rlog.New(tdir, "2006-01-02.json", nil)
 	defer rl.Close()
 
-	rl.Log(0, rlog.M{"hi": 1})
+	rl.Log(rlog.M{"hi": 1})
 
 }
