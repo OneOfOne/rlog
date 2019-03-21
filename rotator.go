@@ -1,6 +1,7 @@
 package rlog
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 	"sync"
@@ -53,6 +54,16 @@ func (r *Rotator) Name() (fpath string) {
 		fpath = r.f.Name()
 	}
 	r.mu.RUnlock()
+
+	return
+}
+
+func (r *Rotator) WithWriter(fn func(w io.Writer) error) (err error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if err = r.tryRotate(); err == nil {
+		err = fn(r.f)
+	}
 
 	return
 }

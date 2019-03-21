@@ -2,6 +2,7 @@ package rlog
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -98,8 +99,34 @@ func (l *Logger) SetIndent(v bool) {
 		return
 	}
 	l.mu.Lock()
-	l.enc.SetIndent("", "\t")
+	if v {
+		l.enc.SetIndent("", "\t")
+	} else {
+		l.enc.SetIndent("", "")
+	}
 	l.mu.Unlock()
+}
+
+// LogRawf writes (and optionally formats) raw data to the underlying log.
+func (l *Logger) LogRawf(format string, args ...interface{}) error {
+	l.mu.Lock()
+	_, err := fmt.Fprintf(l.r, format, args...)
+	l.mu.Unlock()
+	return err
+}
+
+func (l *Logger) LogRaw(p []byte) error {
+	l.mu.Lock()
+	_, err := l.r.Write(p)
+	l.mu.Unlock()
+	return err
+}
+
+func (l *Logger) LogRawString(p string) error {
+	l.mu.Lock()
+	_, err := l.r.WriteString(p)
+	l.mu.Unlock()
+	return err
 }
 
 func (l *Logger) Close() error {
